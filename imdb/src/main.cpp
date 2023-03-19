@@ -35,13 +35,13 @@ int main(int argc, char **argv) {
         for (std::string filename : vm["input-file"].as<std::vector<std::string>>())
             std::cout << "Filename: " << filename << '\n';
 
-    basics_table bt(vm["input-file"].as<std::vector<std::string>>()[0]);
+    ratings_table rt(vm["input-file"].as<std::vector<std::string>>()[0]);
 
-    basics_record br = bt.query_record("tt0000008");
-    std::cout
-        << br.tconst() << ' '
-        << br.original_title() << std::endl;
-    // std::cout << bt.is_valid();
+    std::set<ratings_record>::const_iterator b = rt.cbegin();
+    std::set<ratings_record>::const_iterator e = rt.cend();
+
+    for (; b != e; b++)
+        std::cout << b->tconst() << ' ' << b->average_rating() << ' ' << b->num_votes() << std::endl;
 
     return 0;
 }

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <istream>
 #include <string>
+#include <utility>
 
 ratings_record::ratings_record() :
     _valid(true),
@@ -74,9 +75,21 @@ void ratings_record::parse_string(std::istream& in, char* buf, size_t buf_size, 
     }
 }
 
+const std::string& ratings_record::tconst() const {
+    return _tconst;
+}
+
+const float& ratings_record::average_rating() const {
+    return _average_rating;
+}
+
+const int& ratings_record::num_votes() const {
+    return _num_votes;
+}
+
 ratings_table::ratings_table(std::string filename) : 
     _valid(true),
-    _data(10),
+    _data(),
     _in(filename),
     _signature({
                "tconst", "averageRating", "numVotes"
@@ -93,11 +106,26 @@ ratings_table::ratings_table(std::string filename) :
         }
     }
     
-    for (ratings_record br(_in); br.is_valid(); br = ratings_record(_in))
-        _data.insert(br);
+    for (ratings_record rr(_in); rr.is_valid(); rr = ratings_record(_in))
+        if (rr.num_votes() >= 1000)
+            insert_record(rr);
 }
 
 bool ratings_table::is_valid() {
     return _valid;
+}
+
+void ratings_table::insert_record(const ratings_record& rr) {
+    _data.insert(rr);
+    if (_data.size() > 10)
+        _data.erase(_data.begin());
+}
+
+std::set<ratings_record>::const_iterator ratings_table::cbegin() const {
+    return _data.cbegin();
+}
+
+std::set<ratings_record>::const_iterator ratings_table::cend() const {
+    return _data.cend();
 }
 
