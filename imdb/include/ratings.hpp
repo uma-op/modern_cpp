@@ -2,6 +2,7 @@
 
 #include "heap.hpp"
 
+#include <fstream>
 #include <istream>
 #include <string>
 #include <vector>
@@ -31,11 +32,10 @@ private:
     bool _valid;
 
     preemptive_heap<ratings_record> _data;
-    std::string _filename;
+    std::ifstream _in;
     std::vector<std::string> _signature;
 
 public:
-    ratings_table();
     explicit ratings_table(std::string filename);
     bool is_valid();
 };

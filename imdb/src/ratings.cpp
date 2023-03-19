@@ -1,4 +1,5 @@
 #include "ratings.hpp"
+
 #include <cstddef>
 #include <fstream>
 #include <iostream>
@@ -73,22 +74,18 @@ void ratings_record::parse_string(std::istream& in, char* buf, size_t buf_size, 
     }
 }
 
-ratings_table::ratings_table() :
+ratings_table::ratings_table(std::string filename) : 
     _valid(true),
     _data(10),
-    _filename(),
+    _in(filename),
     _signature({
                "tconst", "averageRating", "numVotes"
-               }) {}
+               })  {
 
-ratings_table::ratings_table(std::string filename) : ratings_table::ratings_table() {
-    _filename = filename;
-
-    std::ifstream in(_filename);
     std::string column;
 
     for (std::string expected_column : _signature) {
-        in >> column;
+        _in >> column;
 
         if (column != expected_column) {
             _valid = false;
@@ -96,7 +93,7 @@ ratings_table::ratings_table(std::string filename) : ratings_table::ratings_tabl
         }
     }
     
-    for (ratings_record br(in); br.is_valid(); br = ratings_record(in))
+    for (ratings_record br(_in); br.is_valid(); br = ratings_record(_in))
         _data.insert(br);
 }
 

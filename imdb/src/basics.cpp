@@ -1,12 +1,9 @@
 #include "basics.hpp"
 #include "heap.hpp"
 
-#include <exception>
-#include <iostream>
 #include <fstream>
-#include <istream>
-#include <locale>
-#include <sstream>
+#include <iostream>
+#include <string>
 
 basics_record::basics_record()  : 
     _valid(true),
@@ -37,8 +34,12 @@ basics_record::basics_record(std::istream& in) : basics_record::basics_record() 
     delete [] buf;
 }
 
-bool basics_record::is_valid() {
+bool basics_record::is_valid() const {
     return _valid;
+}
+
+bool basics_record::is(const std::string& tconst) const {
+    return _tconst == tconst;
 }
 
 bool basics_record::operator<(const basics_record& rhs) const {
@@ -71,36 +72,77 @@ void basics_record::parse_string(std::istream& in, char* buf, size_t buf_size, s
     }
 }
 
+const std::string& basics_record::tconst() const {
+    return _tconst;
+}
 
-basics_table::basics_table() :
+const std::string& basics_record::title_type() const {
+    return _title_type;
+}
+
+const std::string& basics_record::primary_title() const {
+    return _primary_title;
+}
+
+const std::string& basics_record::original_title() const {
+    return _original_title;
+}
+
+const int& basics_record::is_adult() const {
+    return _is_adult;
+}
+
+const std::string& basics_record::start_year() const {
+    return _start_year;
+}
+
+const std::string& basics_record::end_year() const {
+    return _end_year;
+}
+
+const int& basics_record::runtime_minutes() const {
+    return _runtime_minutes;
+}
+
+const std::string& basics_record::genres() const {
+    return _genres;
+}
+
+
+basics_table::basics_table(std::string filename) :
     _valid(true),
     _data(), 
-    _filename(),
+    _in(filename),
     _signature({
                "tconst", "titleType", "primaryTitle", "originalTitle", "isAdult",
                "startYear", "endYear", "runtimeMinutes", "genres"
-               }) {}
+               }) {
 
-basics_table::basics_table(std::string filename) : basics_table::basics_table() {
-    _filename = filename;
-
-    std::ifstream in(filename);
     std::string column;
 
     for (std::string expected_column : _signature) {
-        in >> column;
+        _in >> column;
 
         if (column != expected_column) {
             _valid = false;
             return;
         }
     }
-    
-    for (basics_record br(in); br.is_valid(); br = basics_record(in))
-        _data.insert(br);
 }
 
 bool basics_table::is_valid() {
     return _valid;
+}
+
+basics_record basics_table::query_record(std::string tconst) {
+    std::ifstream::pos_type pos = _in.tellg();
+
+    basics_record br(_in);
+    while (br.is_valid() && !br.is(tconst))
+        br = basics_record(_in);
+    
+    _in.seekg(pos);
+
+    return br;
 }
 
