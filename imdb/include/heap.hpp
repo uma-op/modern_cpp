@@ -21,16 +21,21 @@ private:
         }
     }
     
-    public:
-        preemptive_heap(size_t cap) : _data(new T[cap + 1]), _size(0), _cap(cap) {}
+public:
+    preemptive_heap(size_t cap) : _data(new T[cap + 1]), _size(0), _cap(cap) {}
 
-        ~preemptive_heap() {
-            delete [] _data;
-        }
+    ~preemptive_heap() {
+        delete [] _data;
+    }
 
-        void insert(T elem) {
-            _data[_size] = elem;
-            sift_up(_size);
-            _size = (_size == _cap ? _cap : _size + 1);
-        }
+    void insert(T elem) {
+        _data[_size] = elem;
+        sift_up(_size);
+        _size = (_size == _cap ? _cap : _size + 1);
+    }
+    
+    T erased() {
+        return _data[_size];
+    }
 };
+

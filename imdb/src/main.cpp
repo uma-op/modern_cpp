@@ -1,3 +1,6 @@
+#include "basics.hpp"
+#include "ratings.hpp"
+
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/positional_options.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -31,6 +34,10 @@ int main(int argc, char **argv) {
     if (vm.count("input-file"))
         for (std::string filename : vm["input-file"].as<std::vector<std::string>>())
             std::cout << "Filename: " << filename << '\n';
+
+    ratings_table rt(vm["input-file"].as<std::vector<std::string>>()[0]);
+
+    // std::cout << bt.is_valid();
 
     return 0;
 }
