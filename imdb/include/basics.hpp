@@ -7,10 +7,8 @@
 #include <string>
 #include <vector>
 
-class basics_record : record<int> {
+class basics_record : public record<int> {
 private:
-    bool _valid;
-
     int _tconst;
     std::string _title_type;
     std::string _primary_title;
@@ -24,6 +22,7 @@ private:
 public:
     basics_record();
     explicit basics_record(std::istream& in);
+    explicit basics_record(int pk);
 
     const int& tconst() const;
     const std::string& title_type() const;
@@ -40,7 +39,7 @@ public:
     int primary_key() const;
 };
 
-class basics_table : table<int> {
+class basics_table : public table<basics_record> {
 public:
     explicit basics_table(std::string filename); 
 };

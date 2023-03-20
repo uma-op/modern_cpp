@@ -38,11 +38,8 @@ int main(int argc, char **argv) {
     basics_table bt(vm["input-file"].as<std::vector<std::string>>()[0]);
     ratings_table rt(vm["input-file"].as<std::vector<std::string>>()[1]);
 
-    std::set<ratings_record>::const_iterator b = rt.cbegin();
-    std::set<ratings_record>::const_iterator e = rt.cend();
-
-    for (; b != e; b++)
-        std::cout << b->tconst() << ' ' << b->average_rating() << ' ' <<  bt.query_record(b->tconst()).primary_title() << '\n';
+    for (auto r : rt.top(bt))
+        std::cout << r.tconst() << ' ' << r.average_rating() << '\n';
 
     return 0;
 }

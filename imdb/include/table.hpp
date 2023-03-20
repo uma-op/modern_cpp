@@ -4,12 +4,14 @@
 #include <istream>
 #include <vector>
 
-template <typename primary_key_t>
+template <typename T>
 class record {
-private:
+protected:
     bool _valid;
 
 public:
+    using primary_key_t = T;
+
     record() : _valid(true) {}
 
     bool is_valid() const {
@@ -76,7 +78,7 @@ public:
     virtual primary_key_t primary_key() const = 0;
 };
 
-template <typename primary_key_t>
+template <typename record_t>
 class table {
 protected:
     bool _valid;
@@ -86,7 +88,7 @@ protected:
     std::ifstream _in;
     std::ifstream::pos_type _start_pos;
     
-    primary_key_t _max_record;
+    typename record_t::primary_key_t _max_record;
 
 public:
     explicit table(std::string filename) : 
@@ -114,14 +116,14 @@ public:
         return _valid;
     }
 
-    record<primary_key_t> query_record(primary_key_t pk) {
-        if (pk < _max_record.primary_key()) {
+    record_t query_record(typename record_t::primary_key_t pk) {
+        if (pk < _max_record) {
             _in.seekg(_start_pos);
-            _max_record.reset();
+            _max_record = 0;
         }
         
-        record<primary_key_t> r(_in);
-        for (; r.primary_key() != pk && r.is_valid(); r = record<primary_key_t>(_in))
+        record_t r(_in);
+        for (; r.primary_key() != pk && r.is_valid(); r = record_t(_in))
             if (r.primary_key() > _max_record)
                 _max_record = r.primary_key();
 

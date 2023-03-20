@@ -33,6 +33,12 @@ basics_record::basics_record(std::istream& in) : basics_record::basics_record() 
     delete [] buf;
 }
 
+basics_record::basics_record(int pk) :
+    basics_record() {
+
+    _tconst = pk;
+}
+
 const int& basics_record::tconst() const {
     return _tconst;
 }
@@ -70,24 +76,26 @@ const std::string& basics_record::genres() const {
 }
 
 void basics_record::parse_tconst(std::istream& in, char* buf, size_t buf_size, int& field, char delim) {
-    if (!_valid)
+    if (!is_valid())
         return;
 
     in.getline(buf, buf_size, delim);
 
+    // std::cout << "basics tconst " << buf << '\n';
+
     try {
         field = std::stoi(buf + 2);
     } catch (...) {
-        _valid = false;
+        invalidate();
     }
 }
 
-int basics_record::primary_key() {
+int basics_record::primary_key() const {
     return _tconst;
 }
 
 basics_table::basics_table(std::string filename) :
-    table<int>(filename) {
+    table<basics_record>(filename) {
 
     _signature = {
         "tconst", "titleType", "primaryTitle",
@@ -101,9 +109,12 @@ basics_table::basics_table(std::string filename) :
         _in >> column;
 
         if (column != expected_column) {
+            std::cout << "Invalid ratings signature: expect: " << expected_column << " got: " << column << '\n';
             _valid = false;
             return;
         }
     }
+
+    _start_pos = _in.tellg();
 }
 
