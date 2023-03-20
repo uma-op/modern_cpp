@@ -1,15 +1,17 @@
 #pragma once
 
+#include "table.hpp"
+
 #include <fstream>
 #include <set>
 #include <string>
 #include <vector>
 
-class basics_record {
+class basics_record : record<int> {
 private:
     bool _valid;
 
-    std::string _tconst;
+    int _tconst;
     std::string _title_type;
     std::string _primary_title;
     std::string _original_title;
@@ -23,15 +25,7 @@ public:
     basics_record();
     explicit basics_record(std::istream& in);
 
-    bool is_valid() const;
-    bool is(const std::string& tconst) const;
-
-    bool operator<(const basics_record& rhs) const;
-
-    void parse_int(std::istream& in, char* buf, size_t buf_size, int& field, char delim);
-    void parse_string(std::istream& in, char* buf, size_t buf_size, std::string& field, char delim);
-
-    const std::string& tconst() const;
+    const int& tconst() const;
     const std::string& title_type() const;
     const std::string& primary_title() const;
     const std::string& original_title() const;
@@ -41,21 +35,13 @@ public:
     const int& runtime_minutes() const;
     const std::string& genres() const;
 
+    void parse_tconst(std::istream& in, char* buf, size_t buf_size, int& field, char delim);
+
+    int primary_key() const;
 };
 
-class basics_table {
-private:
-    bool _valid;
-
-    std::set<basics_record> _data;
-    std::ifstream _in;
-    std::vector<std::string> _signature;
-    
+class basics_table : table<int> {
 public:
     explicit basics_table(std::string filename); 
-    bool is_valid();
-
-    basics_record query_record(std::string tconst);
-    
 };
 
