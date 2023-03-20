@@ -115,6 +115,8 @@ basics_table::basics_table(std::string filename) :
         }
     }
 
+    _in.get();
+
     _start_pos = _in.tellg();
 }
 

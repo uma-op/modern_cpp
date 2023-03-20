@@ -1,15 +1,15 @@
 #pragma once
 
+#include "table.hpp"
+
 #include <fstream>
 #include <set>
 #include <string>
 #include <vector>
 
-class akas_record {
+class akas_record : public record<std::pair<int, int>> {
 private:
-    bool _valid;
-
-    std::string _title_id;
+    int _title_id;
     int _ordering;
     std::string _title;
     std::string _region;
@@ -21,35 +21,25 @@ private:
 public:
     akas_record();
     explicit akas_record(std::istream& in);
-    bool is_valid();
 
-    bool operator<(const akas_record& rhs) const;
+    const int& title_id() const;
+    const int& ordering() const;
+    const std::string& title() const;
+    const std::string& region() const;
+    const std::string& language() const;
+    const std::string& types() const;
+    const std::string& attributes() const;
+    const int& is_original_title() const;
 
-    void parse_int(std::istream& in, char* buf, size_t buf_size, int& field, char delim);
-    void parse_string(std::istream& in, char* buf, size_t buf_size, std::string& field, char delim);
+    void parse_tconst(std::istream& _in, char* buf, size_t buf_size, int& field, char delim);
 
-    const std::string& tconst() const;
-    const float& average_rating() const;
-    const int& num_votes() const;
-
+    primary_key_t primary_key() const;
 };
 
-class akas_table {
-private:
-    bool _valid;
-
-    std::set<akas_record> _data;
-    std::ifstream _in;
-    std::vector<std::string> _signature;
-
+class akas_table : table<akas_record> {
 public:
     explicit akas_table(std::string filename);
-    bool is_valid();
 
-    void insert_record(const akas_record& ar);
-
-    std::set<akas_record>::const_iterator cbegin() const;
-    std::set<akas_record>::const_iterator cend() const;
-
+    std::vector<akas_record> query_where(int tconst);
 };
 

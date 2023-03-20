@@ -99,14 +99,13 @@ std::set<ratings_record, ratings_table::rating_cmp> ratings_table::top(basics_ta
     basics_record br;
     
     _in.seekg(_start_pos);
-    _max_record = 0;
 
     for (ratings_record rr = ratings_record(_in); rr.is_valid(); rr = ratings_record(_in)) {
         br = bt.query_record(rr.primary_key());
 
-        // std::cout << br.tconst() << ' ' << br.is_adult() << '\n';
+        // std::cout << br.title_type() << std::endl;
 
-        if (br.is_adult() == 1 || rr.num_votes() < 1000)
+        if (br.is_adult() == 1 || br.runtime_minutes() > 240 || br.title_type() != "movie" || rr.num_votes() < 1000)
             continue;
 
         rrs.insert(rr);

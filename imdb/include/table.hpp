@@ -121,7 +121,7 @@ public:
             _in.seekg(_start_pos);
             _max_record = 0;
         }
-        
+
         record_t r(_in);
         for (; r.primary_key() != pk && r.is_valid(); r = record_t(_in))
             if (r.primary_key() > _max_record)
