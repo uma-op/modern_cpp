@@ -39,6 +39,6 @@ private:
 public:
     explicit ratings_table(std::string filename);
 
-    std::map<int, basics_record> top(basics_table& bt);
+    std::map<int, basics_record> top(basics_table& bt, int minutes);
 };
 

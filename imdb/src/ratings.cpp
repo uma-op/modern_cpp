@@ -98,8 +98,7 @@ bool ratings_table::rating_cmp::operator()(const ratings_record& lhs, const rati
     return lhs.tconst() < rhs.tconst();
 }
 
-std::map<int, basics_record> ratings_table::top(basics_table& bt) {
-    
+std::map<int, basics_record> ratings_table::top(basics_table& bt, int minutes) {
     std::map<int, basics_record> brs;
     std::set<ratings_record, rating_cmp> rrs;
 
@@ -107,15 +106,14 @@ std::map<int, basics_record> ratings_table::top(basics_table& bt) {
     
     _in.seekg(_start_pos);
 
-    auto prev_pos = _start_pos;
-
     for (ratings_record rr = ratings_record(_in); rr.is_valid(); rr = ratings_record(_in)) {
         br = bt.query_record(rr.primary_key());
 
-        if (!br.is_valid())
-            continue;
-
-        if (br.is_adult() == 1 || br.runtime_minutes() > 240 || br.title_type() != "movie" || rr.num_votes() < 1000)
+        if (!br.is_valid() 
+            || br.is_adult() == 1 
+            || br.runtime_minutes() > minutes 
+            || br.title_type() != "movie" 
+            || rr.num_votes() < 1000)
             continue;
 
         rrs.insert(rr);
@@ -126,7 +124,6 @@ std::map<int, basics_record> ratings_table::top(basics_table& bt) {
             rrs.erase(rrs.begin());
         }
     }
-
 
     return brs;
 }

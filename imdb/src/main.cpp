@@ -17,15 +17,14 @@ int main(int argc, char **argv) {
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "produce help message")
-        ("input-file,I", po::value<std::vector<std::string>>(), "specify the input file")
+        ("basics,b", po::value<std::string>(), "specify the basics file")
+        ("ratings,r", po::value<std::string>(), "specify the records file")
+        ("akas,a", po::value<std::string>(), "specify the akas file")
         ("minutes,m", po::value<int>(), "max movie minutes")
     ;
 
-    po::positional_options_description p;
-    p.add("input-file", -1);
-
     po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
+    po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
     po::notify(vm);    
 
     if (vm.count("help")) {
@@ -33,15 +32,11 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    if (vm.count("input-file"))
-        for (std::string filename : vm["input-file"].as<std::vector<std::string>>())
-            std::cout << "Filename: " << filename << '\n';
-
-    basics_table bt(vm["input-file"].as<std::vector<std::string>>()[0]);
-    ratings_table rt(vm["input-file"].as<std::vector<std::string>>()[1]);
-    akas_table at(vm["input-file"].as<std::vector<std::string>>()[2]);
+    basics_table bt(vm["basics"].as<std::string>());
+    ratings_table rt(vm["ratings"].as<std::string>());
+    akas_table at(vm["akas"].as<std::string>());
     
-    std::map<int, basics_record> brs = rt.top(bt);
+    std::map<int, basics_record> brs = rt.top(bt, vm["minutes"].as<int>());
     std::vector<akas_record> ars;
     
     for (std::pair<int, basics_record> br : brs) {
@@ -52,7 +47,7 @@ int main(int argc, char **argv) {
         for (akas_record ar : ars)
             if (ar.language() == "ru" || ar.language() == "RU")
                 ar_ru = ar;
-        std::cout << br.second.original_title() << ' ' << ar_ru.title() << ' ' << ar_ru.language() << std::endl;    
+        std::cout << br.second.original_title() << '|' << ar_ru.title() << std::endl;    
     }
 
     return 0;
