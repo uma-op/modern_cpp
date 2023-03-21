@@ -2,10 +2,12 @@
 #include "basics.hpp"
 
 #include <cstddef>
+#include <cstdlib>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <istream>
+#include <map>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -55,7 +57,7 @@ void ratings_record::parse_tconst(std::istream& in, char* buf, size_t buf_size, 
         return;
 
     in.getline(buf, buf_size, delim);
-
+    
     try {
         field = std::stoi(buf + 2);
     } catch (...) {
@@ -88,35 +90,44 @@ ratings_table::ratings_table(std::string filename) :
 }
 
 bool ratings_table::rating_cmp::operator()(const ratings_record& lhs, const ratings_record& rhs) const {
-    return lhs.average_rating() < rhs.average_rating();
+    if (lhs.average_rating() < rhs.average_rating())
+        return true;
+    else if (lhs.average_rating() > rhs.average_rating())
+        return false;
+
+    return lhs.tconst() < rhs.tconst();
 }
 
-std::set<ratings_record, ratings_table::rating_cmp> ratings_table::top(basics_table& bt) {
+std::map<int, basics_record> ratings_table::top(basics_table& bt) {
     
-    std::set<basics_record> brs;
+    std::map<int, basics_record> brs;
     std::set<ratings_record, rating_cmp> rrs;
 
     basics_record br;
     
     _in.seekg(_start_pos);
 
+    auto prev_pos = _start_pos;
+
     for (ratings_record rr = ratings_record(_in); rr.is_valid(); rr = ratings_record(_in)) {
         br = bt.query_record(rr.primary_key());
 
-        // std::cout << br.title_type() << std::endl;
+        if (!br.is_valid())
+            continue;
 
         if (br.is_adult() == 1 || br.runtime_minutes() > 240 || br.title_type() != "movie" || rr.num_votes() < 1000)
             continue;
 
         rrs.insert(rr);
-        brs.insert(br);
+        brs.insert({rr.primary_key(), br});
 
         if (rrs.size() > 10) {
-            brs.erase(basics_record(rrs.begin()->primary_key()));
+            brs.erase(rrs.begin()->primary_key());
             rrs.erase(rrs.begin());
         }
     }
 
-    return rrs;
+
+    return brs;
 }
 

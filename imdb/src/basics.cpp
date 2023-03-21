@@ -80,9 +80,7 @@ void basics_record::parse_tconst(std::istream& in, char* buf, size_t buf_size, i
         return;
 
     in.getline(buf, buf_size, delim);
-
-    // std::cout << "basics tconst " << buf << '\n';
-
+    
     try {
         field = std::stoi(buf + 2);
     } catch (...) {

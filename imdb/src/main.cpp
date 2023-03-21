@@ -1,3 +1,4 @@
+#include "akas.hpp"
 #include "basics.hpp"
 #include "ratings.hpp"
 
@@ -6,6 +7,7 @@
 #include <boost/program_options/variables_map.hpp>
 
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -37,9 +39,21 @@ int main(int argc, char **argv) {
 
     basics_table bt(vm["input-file"].as<std::vector<std::string>>()[0]);
     ratings_table rt(vm["input-file"].as<std::vector<std::string>>()[1]);
+    akas_table at(vm["input-file"].as<std::vector<std::string>>()[2]);
+    
+    std::map<int, basics_record> brs = rt.top(bt);
+    std::vector<akas_record> ars;
+    
+    for (std::pair<int, basics_record> br : brs) {
+        ars = at.query_where(br.second.tconst());
 
-    for (auto r : rt.top(bt))
-        std::cout << r.tconst() << ' ' << r.average_rating() << '\n';
+        akas_record ar_ru = ars[0];
+
+        for (akas_record ar : ars)
+            if (ar.language() == "ru" || ar.language() == "RU")
+                ar_ru = ar;
+        std::cout << br.second.original_title() << ' ' << ar_ru.title() << ' ' << ar_ru.language() << std::endl;    
+    }
 
     return 0;
 }

@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <istream>
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
@@ -38,6 +39,6 @@ private:
 public:
     explicit ratings_table(std::string filename);
 
-    std::set<ratings_record, rating_cmp> top(basics_table& bt);
+    std::map<int, basics_record> top(basics_table& bt);
 };
 

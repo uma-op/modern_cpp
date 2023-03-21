@@ -119,7 +119,7 @@ public:
     record_t query_record(typename record_t::primary_key_t pk) {
         if (pk < _max_record) {
             _in.seekg(_start_pos);
-            _max_record = 0;
+            _max_record = {};
         }
 
         record_t r(_in);

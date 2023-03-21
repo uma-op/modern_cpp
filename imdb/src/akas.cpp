@@ -103,3 +103,26 @@ akas_table::akas_table(std::string filename) :
     _start_pos = _in.tellg();
 }
 
+std::vector<akas_record> akas_table::query_where(int tconst) {
+    std::vector<akas_record> ars;
+    if (tconst < _max_record.first) {
+        _in.seekg(_start_pos);
+        _max_record = {};
+    }
+
+    akas_record r(_in);
+
+    for (;r.title_id() != tconst; r = akas_record(_in)) {
+        if (r.primary_key() > _max_record)
+            _max_record = r.primary_key();
+    }
+
+    for (;r.title_id() == tconst; r = akas_record(_in)) {
+        if (r.primary_key() > _max_record)
+            _max_record = r.primary_key();
+        ars.push_back(r);
+    }
+
+    return ars;
+}
+
