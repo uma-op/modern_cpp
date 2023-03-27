@@ -34,8 +34,6 @@ public:
     const int& runtime_minutes() const;
     const std::string& genres() const;
 
-    void parse_tconst(std::istream& in, char* buf, size_t buf_size, int& field, char delim);
-
     int primary_key() const;
 };
 

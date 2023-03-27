@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <istream>
+#include <string>
 #include <vector>
 
 template <typename T>
@@ -26,11 +27,12 @@ public:
         return primary_key() < rhs.primary_key();
     }
 
-    void parse_int(std::istream& in, char* buf, size_t buf_size, int& field, char delim) {
+    void parse_int(std::istream& in, int& field, char delim) {
         if (!_valid)
             return;
 
-        in.getline(buf, buf_size, delim);
+        std::string buf;
+        std::getline(in, buf, delim);
 
         if (buf[0] == '\\' && buf[1] == 'N') {
             field = 0;
@@ -44,11 +46,12 @@ public:
         }
     }
 
-    void parse_float(std::istream& in, char* buf, size_t buf_size, float& field, char delim) {
+    void parse_float(std::istream& in, float& field, char delim) {
         if (!_valid)
             return;
 
-        in.getline(buf, buf_size, delim);
+        std::string buf;
+        std::getline(in, buf, delim);
 
         if (buf[0] == '\\' && buf[1] == 'N') {
             field = 0;
@@ -62,16 +65,31 @@ public:
         }
     }
 
-    void parse_string(std::istream& in, char* buf, size_t buf_size, std::string& field, char delim) {
+    void parse_string(std::istream& in, std::string& field, char delim) {
         if (!_valid)
             return;
 
-        in.getline(buf, buf_size, delim);
+        std::string buf;
+        std::getline(in, buf, delim);
 
         if (in.gcount() == 0 && in.eof()) {
             _valid = false;
         } else {
             field.assign(buf);
+        }
+    }
+
+    void parse_tconst(std::istream& in, int& field, char delim) {
+        if (!_valid)
+            return;
+
+        std::string buf;
+        std::getline(in, buf, delim);
+
+        try {
+            field = std::stoi(buf.c_str() + 2);
+        } catch (...) {
+            _valid = false;
         }
     }
 

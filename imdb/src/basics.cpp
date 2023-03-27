@@ -16,21 +16,18 @@ basics_record::basics_record()  :
     _runtime_minutes(),
     _genres() {}
 
-basics_record::basics_record(std::istream& in) : basics_record::basics_record() {
+basics_record::basics_record(std::istream& in) :
+    basics_record::basics_record() {
 
-    char* buf = new char[1024];
-
-    parse_tconst(in, buf, 1024, _tconst, '\t');
-    parse_string(in, buf, 1024, _title_type, '\t');
-    parse_string(in, buf, 1024, _primary_title, '\t');
-    parse_string(in, buf, 1024, _original_title, '\t');
-    parse_int(in, buf, 1024, _is_adult, '\t');
-    parse_string(in, buf, 1024, _start_year, '\t');
-    parse_string(in, buf, 1024, _end_year, '\t');
-    parse_int(in, buf, 1024, _runtime_minutes, '\t');
-    parse_string(in, buf, 1024, _genres, '\n');
-
-    delete [] buf;
+    parse_tconst(in, _tconst, '\t');
+    parse_string(in, _title_type, '\t');
+    parse_string(in, _primary_title, '\t');
+    parse_string(in, _original_title, '\t');
+    parse_int(in, _is_adult, '\t');
+    parse_string(in, _start_year, '\t');
+    parse_string(in, _end_year, '\t');
+    parse_int(in, _runtime_minutes, '\t');
+    parse_string(in, _genres, '\n');
 }
 
 basics_record::basics_record(int pk) :
@@ -73,19 +70,6 @@ const int& basics_record::runtime_minutes() const {
 
 const std::string& basics_record::genres() const {
     return _genres;
-}
-
-void basics_record::parse_tconst(std::istream& in, char* buf, size_t buf_size, int& field, char delim) {
-    if (!is_valid())
-        return;
-
-    in.getline(buf, buf_size, delim);
-    
-    try {
-        field = std::stoi(buf + 2);
-    } catch (...) {
-        invalidate();
-    }
 }
 
 int basics_record::primary_key() const {

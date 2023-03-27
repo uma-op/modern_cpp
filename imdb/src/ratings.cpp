@@ -20,14 +20,10 @@ ratings_record::ratings_record() :
 
 ratings_record::ratings_record(std::istream& in) :
     ratings_record::ratings_record() {
-
-    char* buf = new char[1024];
     
-    parse_tconst(in, buf, 1024, _tconst, '\t');
-    parse_float(in, buf, 1024, _average_rating, '\t');
-    parse_int(in, buf, 1024, _num_votes, '\n');
-
-    delete [] buf;
+    parse_tconst(in, _tconst, '\t');
+    parse_float(in, _average_rating, '\t');
+    parse_int(in, _num_votes, '\n');
 }
 
 ratings_record::ratings_record(int pk) :
@@ -50,19 +46,6 @@ const int& ratings_record::num_votes() const {
 
 int ratings_record::primary_key() const {
     return _tconst;
-}
-
-void ratings_record::parse_tconst(std::istream& in, char* buf, size_t buf_size, int& field, char delim) {
-    if (!is_valid())
-        return;
-
-    in.getline(buf, buf_size, delim);
-    
-    try {
-        field = std::stoi(buf + 2);
-    } catch (...) {
-        invalidate();
-    }
 }
 
 ratings_table::ratings_table(std::string filename) : 

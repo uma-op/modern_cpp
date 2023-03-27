@@ -25,8 +25,6 @@ public:
     const float& average_rating() const;
     const int& num_votes() const;
 
-    void parse_tconst(std::istream& in, char* buf, size_t buf_size, int& field, char delim);
-
     int primary_key() const;
 };
 

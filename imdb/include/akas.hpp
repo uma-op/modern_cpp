@@ -31,8 +31,6 @@ public:
     const std::string& attributes() const;
     const int& is_original_title() const;
 
-    void parse_tconst(std::istream& _in, char* buf, size_t buf_size, int& field, char delim);
-
     primary_key_t primary_key() const;
 };
 

@@ -15,18 +15,14 @@ akas_record::akas_record() :
 akas_record::akas_record(std::istream& in) :
     akas_record() {
 
-    char* buf = new char[1024];
-
-    parse_tconst(in, buf, 1024, _title_id, '\t');
-    parse_int(in, buf, 1024, _ordering, '\t');
-    parse_string(in, buf, 1024, _title, '\t');
-    parse_string(in, buf, 1024, _region, '\t');
-    parse_string(in, buf, 1024, _language, '\t');
-    parse_string(in, buf, 1024, _types, '\t');
-    parse_string(in, buf, 1024, _attributes, '\t');
-    parse_int(in, buf, 1024, _is_original_title, '\n');
-    
-    delete [] buf;
+    parse_tconst(in, _title_id, '\t');
+    parse_int(in, _ordering, '\t');
+    parse_string(in, _title, '\t');
+    parse_string(in, _region, '\t');
+    parse_string(in, _language, '\t');
+    parse_string(in, _types, '\t');
+    parse_string(in, _attributes, '\t');
+    parse_int(in, _is_original_title, '\n');
 }
 
 const int& akas_record::title_id() const {
@@ -59,19 +55,6 @@ const std::string& akas_record::attributes() const {
 
 const int& akas_record::is_original_title() const {
     return _is_original_title;
-}
-
-void akas_record::parse_tconst(std::istream& in, char* buf, size_t buf_size, int& field, char delim) {
-    if (!is_valid())
-        return;
-
-    in.getline(buf, buf_size, delim);
-
-    try {
-        field = std::stoi(buf + 2);
-    } catch (...) {
-        invalidate();
-    }
 }
 
 akas_record::primary_key_t akas_record::primary_key() const {
