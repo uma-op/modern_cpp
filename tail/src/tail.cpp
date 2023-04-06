@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <utility>
 
 #include "tail.hpp"
 #include "translate.hpp"
@@ -43,7 +44,9 @@ bool tail::cyclic_buffer::full() {
 
 tail::tail(size_t n) :
     _buf(n),
-    _next_op(new translate(std::cout.rdbuf())) {}
+    _next_op(std::make_unique<translate>(std::cout.rdbuf())) {}
+
+tail::~tail() {}
 
 void tail::process_line(const std::string& str) {
     _buf.write(str);
@@ -56,10 +59,10 @@ void tail::handle_end_of_input() {
     _next_op->handle_end_of_input();
 }
 
-void tail::set_next_operation(operation_interface* op) {
+void tail::set_next_operation(opptr_t op) {
     if (!op)
         return;
 
-    _next_op = op;
+    _next_op = std::move(op);
 }
 

@@ -17,4 +17,6 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} Boost::program_options)
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
+target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=address)
+target_link_options(${PROJECT_NAME} PUBLIC -fsanitize=address -lasan)
 

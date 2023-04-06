@@ -8,15 +8,18 @@
 
 class echo: public operation_interface {
 public:
+    explicit echo();
     explicit echo(const std::string& str);
+
+    ~echo();
 
     void process_line(const std::string& str) override;
     void handle_end_of_input() override;
-    void set_next_operation(operation_interface* op) override;
+    void set_next_operation(opptr_t op) override;
 
 private:
     std::string _str;
-    operation_interface* _next_op;
+    opptr_t _next_op;
 
 };
 

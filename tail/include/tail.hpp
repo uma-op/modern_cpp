@@ -9,9 +9,11 @@ class tail: public operation_interface {
 public:
     explicit tail(size_t n);
 
+    ~tail();
+
     void process_line(const std::string& str) override;
     void handle_end_of_input() override;
-    void set_next_operation(operation_interface* op) override;
+    void set_next_operation(opptr_t op) override;
 
 private:
     class cyclic_buffer {
@@ -32,7 +34,7 @@ private:
     };
 
     cyclic_buffer _buf;
-    operation_interface* _next_op;
+    opptr_t _next_op;
     
 };
 
