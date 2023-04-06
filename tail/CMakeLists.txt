@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(imdb)
+project(tail)
 
 set(CXX_STANDARD 17)
 set(CXX_STANDARD_REQUIRED True)
