@@ -1,3 +1,4 @@
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -22,7 +23,7 @@ pipeline::pipeline(const std::string& str) :
     while (s >> cmd) {
         s >> arg;
 
-        if (cmd == "ehco")
+        if (cmd == "echo")
             add_operation(std::make_unique<echo>(arg));
         else if (cmd == "cat")
             add_operation(std::make_unique<cat>(arg));
